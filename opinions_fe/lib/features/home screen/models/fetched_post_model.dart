@@ -8,15 +8,7 @@ class FetchedPostModel {
   final String userName;
 
   factory FetchedPostModel.fromJson(Map<dynamic, dynamic> json) {
-
-    print(json['post']['title']);
-    print(json['post']['genre']);
-    print(json['post']['created_at']);
-    print(json['post']['context']);
-    print(json['vote']);
-    print(json['username']);
-
-
+    
 
     return FetchedPostModel(
 

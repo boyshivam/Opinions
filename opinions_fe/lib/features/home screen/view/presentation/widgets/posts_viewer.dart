@@ -1,13 +1,13 @@
 import "package:flutter/material.dart";
+import "package:opinions/features/home%20screen/models/fetched_post_model.dart";
 import "package:opinions/features/home%20screen/view/presentation/widgets/post.dart";
 
-import "../../../models/post_model.dart";
 
 
 class PostsViewer extends StatelessWidget {
   const PostsViewer({super.key, required this.posts, required this.parentHeight});
 
-  final List<PostModel> posts;
+  final List<FetchedPostModel> posts;
   final double parentHeight;
 
   @override

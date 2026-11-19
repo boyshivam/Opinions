@@ -1,6 +1,10 @@
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
+import "package:go_router/go_router.dart" show GoRouterHelper;
+import "package:opinions/features/registration/enums/user_creation_enums.dart";
 import "package:opinions/features/registration/view_model/provider/login_provider.dart";
+import "package:opinions/features/registration/view_model/state/login_state.dart";
+import "package:opinions/router/routes.dart";
 import "package:opinions/utils/helper_functions/generic_nav_button.dart"; // 1. Use flutter_riverpod for UI widgets
 
 class SignUpScreen extends ConsumerStatefulWidget {
@@ -31,7 +35,57 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final loginNotifier = ref.read(loginProvider.notifier);
+
+    ref.listen<LoginState>(loginProvider, (previous, next){
+      switch (next.signUpState) {
+        case (UserCreationEnums.success):
+          context.go(AppRoutes.loginScreen);
+          break;
+
+        case (UserCreationEnums.serverError):
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text("Something went wrong"),
+                content: const Text("Server side error"),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text("OK"),
+                  ),
+                ],
+              );
+            },
+          );
+
+        case (UserCreationEnums.failed):
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text("Error"),
+                content: const Text("User could not be registered, try again later"),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text("OK"),
+                  ),
+                ],
+              );
+            },
+          );
+
+
+        default:
+          break;
+      }
+
+    });
 
     return GestureDetector(
       onTap: () {
@@ -163,9 +217,12 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                               loginProvider.notifier,
                             );
 
-                            loginNotifier.submitInput();
+                            loginNotifier.submitUserData(
+                              usernameController.text,
+                              passwordController.text,
+                            );
                           },
-                          child: GenericNavButton(ctaText: "Login"),
+                          child: GenericNavButton(ctaText: "Submit"),
                         ),
                       ],
                     ),

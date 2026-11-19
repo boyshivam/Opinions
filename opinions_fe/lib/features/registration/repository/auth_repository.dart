@@ -1,14 +1,11 @@
 import "dart:convert";
+
 import "package:http/http.dart" as http;
-
-
-
 
 class AuthRepository {
   AuthRepository({required this.client});
 
   final http.Client client;
-
 
   // login functionality
   Future<String> login(String username, String password) async {
@@ -19,16 +16,12 @@ class AuthRepository {
       headers: {'Content-Type': 'application/x-www-form-urlencoded'},
       body: {"username": username, "password": password},
     );
-
-
     if (response.statusCode == 200 || response.statusCode == 201) {
       final data = jsonDecode(response.body);
       final token = data["access_token"] as String;
       return token;
-
-
     }
-    if  (response.statusCode == 401) {
+    if (response.statusCode == 401) {
       throw Exception("Invalid credentials");
     }
     if (response.statusCode == 404) {

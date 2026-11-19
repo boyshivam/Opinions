@@ -176,16 +176,21 @@ class _CreateDashboardScreenState extends ConsumerState<CreateDashboardScreen> {
                       ),
                       ElevatedButton(
                         onPressed: () {
+
+
                           if (_formKey.currentState!.validate()) {
                             final createPostNotifier = ref.read(
                               createPostProvider.notifier,
                             );
+
+
 
                             createPostNotifier.addPostData(
                               titleTextController.text,
                               genreTextController.text,
                               contextTextController.text,
                             );
+
                           }
                         },
                         child: Text("Submit"),
@@ -194,6 +199,7 @@ class _CreateDashboardScreenState extends ConsumerState<CreateDashboardScreen> {
                       ElevatedButton(
                         onPressed: () {
                           context.go(AppRoutes.loginScreen);
+
                         },
                         child: Text("Logout"),
                       ),

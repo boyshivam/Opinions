@@ -40,8 +40,6 @@ Future<PostCreationEnums> createAPost(CreatePostModel post) async {
     return PostCreationEnums.internalServerError;
   }
   else  {
-    print(response.body );
-    print(response.statusCode);
     return PostCreationEnums.error;
   }
 }

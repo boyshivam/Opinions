@@ -9,6 +9,8 @@ class AllPostsRepository {
 
   final http.Client client;
 
+
+  // Fetch all existing posts from BE
   Future<List<FetchedPostModel>> fetchAllPosts() async {
 
     final url = Uri.parse("http://10.0.2.2:8000/post/");
@@ -42,6 +44,9 @@ class AllPostsRepository {
     throw Exception("${response.body} , ${response.statusCode}");
 
   }
+
+
+  //
 
 
 

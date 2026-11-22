@@ -3,18 +3,25 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:opinions/features/create_module/enums/post_creation_enums.dart';
 import 'package:opinions/features/create_module/view_model/providers/create_post_provider.dart';
+import 'package:opinions/features/home%20screen/models/fetched_post_model.dart';
 import 'package:opinions/router/routes.dart';
 import 'package:opinions/utils/helper_functions/common_header.dart';
 
-class CreateDashboardScreen extends ConsumerStatefulWidget {
-  const CreateDashboardScreen({super.key});
+class CreatePostScreen extends ConsumerStatefulWidget {
+  const CreatePostScreen({
+    super.key,
+    this.editMode = false,
+     this.sharedPost,
+  });
+
+  final bool editMode;
+  final FetchedPostModel? sharedPost;
 
   @override
-  ConsumerState<CreateDashboardScreen> createState() =>
-      _CreateDashboardScreenState();
+  ConsumerState<CreatePostScreen> createState() => _CreatePostScreenState();
 }
 
-class _CreateDashboardScreenState extends ConsumerState<CreateDashboardScreen> {
+class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
   // declare text controller to derive values
   final TextEditingController titleTextController = TextEditingController();
   final TextEditingController genreTextController = TextEditingController();
@@ -23,15 +30,30 @@ class _CreateDashboardScreenState extends ConsumerState<CreateDashboardScreen> {
   final _formKey = GlobalKey<FormState>();
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.editMode == true && widget.sharedPost != null) {
+      titleTextController.text = widget.sharedPost!.responseModel.title;
+      genreTextController.text = widget.sharedPost!.responseModel.genre;
+      contextTextController.text = widget.sharedPost!.responseModel.context;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final editMode = widget.editMode;
+
     ref.listen(createPostProvider, ((previous, next) async {
       switch (next.postStatus) {
-
         // snack bar msg for success post creation
         case PostCreationEnums.success:
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Post created successfully!"),
+            SnackBar(
+              content: Text(
+                editMode == true
+                    ? "Post edited successfully!"
+                    : "Post created successfully!",
+              ),
               duration: Duration(seconds: 2),
             ),
           );
@@ -45,7 +67,11 @@ class _CreateDashboardScreenState extends ConsumerState<CreateDashboardScreen> {
             builder: (context) {
               return AlertDialog(
                 title: const Text("Error"),
-                content: const Text("Post could not be created! Try again."),
+                content: Text(
+                  editMode
+                      ? "Post could not be edited! Try again."
+                      : "Post could not be created! Try again.",
+                ),
                 actions: [
                   TextButton(
                     onPressed: () {
@@ -91,10 +117,10 @@ class _CreateDashboardScreenState extends ConsumerState<CreateDashboardScreen> {
     return Scaffold(
       body: LayoutBuilder(
         builder: (context, builder) {
-          return SingleChildScrollView(
+          Widget currentScreen = SingleChildScrollView(
             child: Column(
               children: [
-                CommonHeader(headerText: "Add a post"),
+                CommonHeader(headerText: editMode ? "Edit post" : "Add a post"),
                 Form(
                   key: _formKey,
                   child: Column(
@@ -106,7 +132,11 @@ class _CreateDashboardScreenState extends ConsumerState<CreateDashboardScreen> {
                         ),
                         child: Column(
                           children: [
-                            Text("Title of your post"),
+                            Text(
+                              editMode
+                                  ? "Edit your post"
+                                  : "Title of your post",
+                            ),
                             TextFormField(
                               controller: titleTextController,
                               maxLength: 30,
@@ -131,7 +161,7 @@ class _CreateDashboardScreenState extends ConsumerState<CreateDashboardScreen> {
                         ),
                         child: Column(
                           children: [
-                            Text("Name a genre"),
+                            Text(editMode ? "Edit genre" : "Name a genre"),
                             TextFormField(
                               controller: genreTextController,
                               maxLength: 30,
@@ -156,7 +186,11 @@ class _CreateDashboardScreenState extends ConsumerState<CreateDashboardScreen> {
                         ),
                         child: Column(
                           children: [
-                            Text("Elaborate on your view"),
+                            Text(
+                              editMode
+                                  ? "Edit your view"
+                                  : "Elaborate on your view",
+                            ),
                             TextFormField(
                               controller: contextTextController,
                               maxLength: 30,
@@ -174,34 +208,42 @@ class _CreateDashboardScreenState extends ConsumerState<CreateDashboardScreen> {
                           ],
                         ),
                       ),
-                      ElevatedButton(
-                        onPressed: () {
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 25,
+                          vertical: 20,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                context.pop();
+                                // editMode
+                                //     ? context.pop()
+                                //     : context.go(AppRoutes.loginScreen);
+                              },
+                              child: Text("Cancel"),
+                            ),
+                            const SizedBox(width: 20),
+                            ElevatedButton(
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  final createPostNotifier = ref.read(
+                                    createPostProvider.notifier,
+                                  );
+                                  createPostNotifier.addPostData(
+                                    titleTextController.text,
+                                    genreTextController.text,
+                                    contextTextController.text,
+                                  );
+                                }
+                              },
+                              child: Text("Submit"),
+                            ),
 
-
-                          if (_formKey.currentState!.validate()) {
-                            final createPostNotifier = ref.read(
-                              createPostProvider.notifier,
-                            );
-
-
-
-                            createPostNotifier.addPostData(
-                              titleTextController.text,
-                              genreTextController.text,
-                              contextTextController.text,
-                            );
-
-                          }
-                        },
-                        child: Text("Submit"),
-                      ),
-                      const SizedBox(width: 20),
-                      ElevatedButton(
-                        onPressed: () {
-                          context.go(AppRoutes.loginScreen);
-
-                        },
-                        child: Text("Logout"),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -209,6 +251,8 @@ class _CreateDashboardScreenState extends ConsumerState<CreateDashboardScreen> {
               ],
             ),
           );
+
+          return currentScreen;
         },
       ),
     );

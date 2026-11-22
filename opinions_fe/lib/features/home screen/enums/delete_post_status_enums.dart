@@ -1,0 +1,5 @@
+
+
+enum DeletePostStatusEnums {
+  neutral, selected
+}

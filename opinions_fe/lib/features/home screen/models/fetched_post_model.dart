@@ -8,7 +8,7 @@ class FetchedPostModel {
   final String userName;
 
   factory FetchedPostModel.fromJson(Map<dynamic, dynamic> json) {
-    
+
 
     return FetchedPostModel(
 

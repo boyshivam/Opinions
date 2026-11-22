@@ -12,6 +12,10 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
 
+  late TextEditingController titleController;
+  late TextEditingController genreController;
+  late TextEditingController contextController;
+
 
   @override
     void initState() {
@@ -20,8 +24,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       Future.microtask((){
         ref.invalidate(allPostsProvider);
       });
+      titleController = TextEditingController();
+      contextController = TextEditingController();
+      genreController = TextEditingController();
     }
 
+
+    @override
+      void dispose() {
+        // TODO: implement dispose
+        super.dispose();
+        titleController.dispose();
+        contextController.dispose();
+        genreController.dispose();
+      }
 
   @override
   Widget build(BuildContext context) {
@@ -103,6 +119,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           PostsViewer(
                             posts: posts,
                             parentHeight: constraints.maxHeight,
+                            titleController: titleController,
+                            contextController: contextController,
+                            genreController: genreController,
+
                           ),
                         ],
                       ),

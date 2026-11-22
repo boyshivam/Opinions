@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
-
-import "package:opinions/features/create_module/view/presentation/screens/create_dashboard.dart";
+import "package:opinions/features/create_module/route_extras/create_screen_extras.dart";
+import "package:opinions/features/create_module/view/presentation/screens/create_post_screen.dart";
 import "package:opinions/features/home%20screen/enums/bottom_navbar_enums.dart";
 import "package:opinions/features/home%20screen/view/presentation/screen/home_screen.dart";
 import "package:opinions/features/home%20screen/view/presentation/widgets/bottom_nav_bar.dart";
@@ -42,7 +42,18 @@ final appRouter = GoRouter(
         GoRoute(
           path: AppRoutes.createScreen,
           name: "createScreen",
-          builder: (context, state) => const CreateDashboardScreen(),
+          builder: (context, state) {
+            final args = state.extra as CreateScreenExtras?;
+
+            final argEditMode = args?.editMode ?? false;
+            final argSharedPost = args?.sharedPost ;
+
+            return CreatePostScreen(
+              editMode: argEditMode,
+              sharedPost: argSharedPost,
+            );
+
+          },
         ),
         GoRoute(
           path: AppRoutes.profileScreen,

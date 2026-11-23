@@ -1,7 +1,10 @@
-enum PostCreationEnums {
+enum PostResponseEnums {
   initial,
   loading,
   success,
   error,
-  internalServerError
+  internalServerError,
+  notFound,
+  unauthorized,
+  timeOut
 }

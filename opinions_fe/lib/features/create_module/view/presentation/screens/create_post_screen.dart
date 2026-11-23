@@ -8,11 +8,7 @@ import 'package:opinions/router/routes.dart';
 import 'package:opinions/utils/helper_functions/common_header.dart';
 
 class CreatePostScreen extends ConsumerStatefulWidget {
-  const CreatePostScreen({
-    super.key,
-    this.editMode = false,
-     this.sharedPost,
-  });
+  const CreatePostScreen({super.key, this.editMode = false, this.sharedPost});
 
   final bool editMode;
   final FetchedPostModel? sharedPost;
@@ -42,11 +38,12 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
   @override
   Widget build(BuildContext context) {
     final editMode = widget.editMode;
+    final post = widget.sharedPost;
 
     ref.listen(createPostProvider, ((previous, next) async {
       switch (next.postStatus) {
         // snack bar msg for success post creation
-        case PostCreationEnums.success:
+        case PostResponseEnums.success:
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
@@ -57,11 +54,12 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
               duration: Duration(seconds: 2),
             ),
           );
+
           context.go(AppRoutes.homeScreen);
           break;
 
         // pop up dialogue for error response
-        case PostCreationEnums.error:
+        case PostResponseEnums.error:
           showDialog(
             context: context,
             builder: (context) {
@@ -85,7 +83,29 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
           );
           break;
 
-        case PostCreationEnums.internalServerError:
+        case PostResponseEnums.notFound:
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text("Error"),
+                content: Text(
+                  "Post not found by the requested id ${post!.responseModel.postId}",
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text("OK"),
+                  ),
+                ],
+              );
+            },
+          );
+          break;
+
+        case PostResponseEnums.internalServerError:
           showDialog(
             context: context,
             builder: (context) {
@@ -105,7 +125,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
           );
           break;
 
-        case PostCreationEnums.loading:
+        case PostResponseEnums.loading:
           CircularProgressIndicator();
           break;
 
@@ -216,6 +236,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            // cancel button to navigate to previous screen
                             ElevatedButton(
                               onPressed: () {
                                 context.pop();
@@ -226,22 +247,36 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                               child: Text("Cancel"),
                             ),
                             const SizedBox(width: 20),
+
+                            // submit button for post in create and edit mode
                             ElevatedButton(
                               onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  final createPostNotifier = ref.read(
-                                    createPostProvider.notifier,
-                                  );
-                                  createPostNotifier.addPostData(
-                                    titleTextController.text,
-                                    genreTextController.text,
-                                    contextTextController.text,
-                                  );
+                                final createPostNotifier = ref.read(
+                                  createPostProvider.notifier,
+                                );
+
+                                if (editMode == false) {
+                                  if (_formKey.currentState!.validate()) {
+                                    createPostNotifier.addPostData(
+                                      titleTextController.text,
+                                      genreTextController.text,
+                                      contextTextController.text,
+                                    );
+                                  }
+                                }
+                                if (editMode == true) {
+                                  if (_formKey.currentState!.validate()) {
+                                    createPostNotifier.updatePostData(
+                                      titleTextController.text,
+                                      genreTextController.text,
+                                      contextTextController.text,
+                                      post!.responseModel.postId,
+                                    );
+                                  }
                                 }
                               },
                               child: Text("Submit"),
                             ),
-
                           ],
                         ),
                       ),

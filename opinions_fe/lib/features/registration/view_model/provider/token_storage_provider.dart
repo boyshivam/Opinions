@@ -1,7 +1,7 @@
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:opinions/features/registration/repository/services/token_storge_service.dart';
 
-final tokenStorageProvider = Provider<FlutterSecureStorage>((ref){
-  return const FlutterSecureStorage();
+final tokenStorageProvider = Provider<TokenStorgeService>((ref){
+  return TokenStorgeService();
 });

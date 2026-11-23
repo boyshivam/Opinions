@@ -254,9 +254,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   loginProvider.notifier,
                                 );
 
-                                print(usernameController.text);
-                                print(passwordController.text);
-
                                 // this will attempt login
                                 loginNotifier.userLogin(
                                   usernameController.text,

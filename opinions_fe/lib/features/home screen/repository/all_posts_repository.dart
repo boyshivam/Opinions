@@ -21,6 +21,7 @@ class AllPostsRepository {
 
 
     if (token == null || token.isEmpty){
+
       throw Exception("Authorization token not found");
     }
 

@@ -18,14 +18,6 @@ class LoginNotifier extends Notifier<LoginState> {
     );
   }
 
-  // void enteredUsername(String username) {
-  //   state = state.copyWith(username: username);
-  // }
-  //
-  // void enteredPassword(String password) {
-  //   state = state.copyWith(password: password);
-  // }
-
   Future<void> userLogin(String username, String password) async {
     state = state.copyWith(loginState: LoginStatusEnums.loading);
 

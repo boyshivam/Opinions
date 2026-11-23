@@ -21,7 +21,7 @@ class PostState {
   final CreatePostTextFieldEnums genreFieldState;
   final String contextFieldText;
   final CreatePostTextFieldEnums contextFieldState;
-  final PostCreationEnums postStatus;
+  final PostResponseEnums postStatus;
 
 
   PostState copyWith({
@@ -32,7 +32,7 @@ class PostState {
     CreatePostTextFieldEnums? titleFieldState,
     CreatePostTextFieldEnums? genreFieldState,
     CreatePostTextFieldEnums? contextFieldState,
-    PostCreationEnums? postStatus
+    PostResponseEnums? postStatus
 
 }){
     return PostState(

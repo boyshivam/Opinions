@@ -3,7 +3,7 @@ import "package:opinions/core/utils/helpers/local_time_zone_helper.dart";
 import "package:opinions/features/create_module/route_extras/create_screen_extras.dart";
 import "package:opinions/features/home%20screen/models/fetched_post_model.dart";
 import "package:flutter/material.dart";
-import "package:opinions/features/home%20screen/view_model/provider/post_provider.dart";
+import "package:opinions/features/home%20screen/view/presentation/widgets/delete_post_pop_up.dart";
 import "package:opinions/router/routes.dart";
 import "package:go_router/go_router.dart";
 
@@ -23,7 +23,8 @@ class Post extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final postNotifier = ref.read(postProvider.notifier);
+
+    final postId = post.responseModel.postId;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -57,8 +58,20 @@ class Post extends ConsumerWidget {
                               context.push(
                                 AppRoutes.createScreen,
                                 extra: CreateScreenExtras(
-                                    editMode: true,
-                                    sharedPost: post)
+                                  editMode: true,
+                                  sharedPost: post,
+                                ),
+                              );
+                            }
+                            if (value == "delete") {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+
+
+
+                                  return DeletePostPopUp(postId: postId,);
+                                },
                               );
                             }
                           },

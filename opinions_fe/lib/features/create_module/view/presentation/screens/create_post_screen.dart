@@ -83,6 +83,30 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
           );
           break;
 
+
+        case PostResponseEnums.unauthorized:
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text("Error"),
+                content: Text(
+                  "Unauthorized access",
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text("OK"),
+                  ),
+                ],
+              );
+            },
+          );
+          break;
+
+
         case PostResponseEnums.notFound:
           showDialog(
             context: context,
